@@ -12,8 +12,14 @@ namespace PokemonCache
             MainMenu,
             ActionMenu,
             SaveMenu,
-            Quit,
-            ErrorMenu
+            ErrorMenu,
+            PKMMenu,
+            Quit
+        }
+        public enum RuntimeEnv
+        {
+            MiyooMini,
+            Desktop
         }
 
         private static IntPtr _Window = IntPtr.Zero;
@@ -31,14 +37,15 @@ namespace PokemonCache
         internal static bool updateDisplay;
         internal static string[] savList = Array.Empty<string>();
         internal static Tuple<bool,string> errorOccured = Tuple.Create(false, "");
-
+        private static RuntimeEnv env;
+        public static string savPath;
 
         static void Main()
         {
             basePath = Directory.GetCurrentDirectory() + "/res/";
+            env = basePath.Contains("SDCARD") ? RuntimeEnv.MiyooMini : RuntimeEnv.Desktop;
             CheckErr(SDL.SDL_Init(SDL.SDL_INIT_VIDEO));
             CheckErr(SDL_ttf.TTF_Init());
-            UI_Elements.Init();
             displayState = DisplayState.MainMenu;
             lastDisplayState = DisplayState.None;
             _Window = SDL.SDL_CreateWindow("main", SDL.SDL_WINDOWPOS_UNDEFINED, SDL.SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL.SDL_WindowFlags.SDL_WINDOW_SHOWN);
@@ -49,17 +56,26 @@ namespace PokemonCache
             texture = SDL.SDL_CreateTexture(Renderer, SDL.SDL_PIXELFORMAT_ARGB8888, (int)SDL.SDL_TextureAccess.SDL_TEXTUREACCESS_STREAMING, SCREEN_WIDTH, SCREEN_HEIGHT);
 
             SDL.SDL_GetClipRect(screen_ptr, out clipRect);
+            switch (env)
+            {
+                case RuntimeEnv.MiyooMini:
+                    savPath = "/mnt/SDCARD/Saves/CurrentProfile/saves/gpSP/";
+                    break;
+                case RuntimeEnv.Desktop:
+                    savPath = basePath;
+                    break;
+            }
 
-            //SaveUtil.GetSavesFromFolder(basePath, true, out IEnumerable<string> files, true);
-            //foreach (string file in files)
-            //{
-            //    if (file.ToLower().Contains("pokemon"))
-            //    {
-            //        savList = savList.Append(file).ToArray();
-            //    }
-            //}
-
-            SaveMenu.maxSelectionIndex = savList.Length - 1;
+            SaveUtil.GetSavesFromFolder(savPath, true, out IEnumerable<string> files, true);
+            foreach (string file in files)
+            {
+                if (file.ToLower().Contains("pokemon"))
+                {
+                    savList = savList.Append(file).ToArray();
+                }
+            }
+            UI_Elements.Init();
+            PKMSpriteData.Init();
 
             while (displayState != DisplayState.Quit)
             {
@@ -70,7 +86,6 @@ namespace PokemonCache
                     {
                         displayState = DisplayState.ErrorMenu;
                     }
-                    Console.WriteLine($"Changeing to Display {displayState}");
                     switch (displayState)
                     {
                         case DisplayState.MainMenu:
@@ -86,7 +101,9 @@ namespace PokemonCache
                             ErrorMenu.Render(errorOccured.Item2);
                             errorOccured = Tuple.Create(false, "");
                             break;
-
+                        case DisplayState.PKMMenu:
+                            PKMMenu.Render();
+                            break;
                     }
 
                     CheckErr(SDL.SDL_RenderClear(Renderer)); //Clear 

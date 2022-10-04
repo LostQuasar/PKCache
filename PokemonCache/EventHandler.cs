@@ -3,7 +3,6 @@ using SDL2;
 using static PokemonCache.PokemonCache;
 
 namespace PokemonCache
-
 {
 	public class SDL_EventHandler
 	{
@@ -84,7 +83,8 @@ namespace PokemonCache
                                     }
                                     break;
                                 case SDL.SDL_Keycode.SDLK_SPACE:
-                                    Console.WriteLine(PokemonCache.savList[SaveMenu.selectionIndex]);
+                                    SaveHandler.LoadSave(savList[SaveMenu.selectionIndex]);
+                                    displayState = DisplayState.PKMMenu;
                                     break;
                             }
                             break;
@@ -96,6 +96,31 @@ namespace PokemonCache
                                     break;
                                 case SDL.SDL_Keycode.SDLK_SPACE:
                                     displayState = DisplayState.MainMenu;
+                                    break;
+                            }
+                            break;
+                        case DisplayState.PKMMenu:
+                            switch (e.key.keysym.sym)
+                            {
+                                case SDL.SDL_Keycode.SDLK_LCTRL:
+                                    displayState = DisplayState.SaveMenu;
+                                    PKMMenu.selectionIndex = 0;
+                                    break;
+                                case SDL.SDL_Keycode.SDLK_SPACE:
+                                    break;
+                                case SDL.SDL_Keycode.SDLK_DOWN:
+                                    if (PKMMenu.selectionIndex < PKMMenu.maxSelectionIndex)
+                                    {
+                                        PKMMenu.selectionIndex++;
+                                        updateDisplay = true;
+                                    }
+                                    break;
+                                case SDL.SDL_Keycode.SDLK_UP:
+                                    if (PKMMenu.selectionIndex > 0)
+                                    {
+                                        PKMMenu.selectionIndex--;
+                                        updateDisplay = true;
+                                    }
                                     break;
                             }
                             break;

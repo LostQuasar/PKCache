@@ -9,6 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="PKHeX.Core">
       <HintPath>..\..\PKHeX\PKHeX.Core\bin\Debug\net46\PKHeX.Core.dll</HintPath>
     </Reference>
