@@ -1,125 +1,125 @@
-﻿
+﻿using PKCache.Screen;
 using SDL2;
-using static PokemonCache.PokemonCache;
 
-namespace PokemonCache
+namespace PKCache
 {
-	public class SDL_EventHandler
-	{
-        internal static DisplayState NewEvent(SDL.SDL_Event e, DisplayState displayState)
-		{
+    public class SDLEventHandler
+    {
+        public static ScreenHandler.DisplayState NewEvent(SDL.SDL_Event e, ScreenHandler.DisplayState displayState)
+        {
             switch (e.type)
             {
                 case SDL.SDL_EventType.SDL_QUIT:
-                    displayState = DisplayState.Quit;
+                    displayState = ScreenHandler.DisplayState.Quit;
                     break;
                 case SDL.SDL_EventType.SDL_KEYUP:
                     switch (e.key.keysym.sym)
                     {
                         case SDL.SDL_Keycode.SDLK_ESCAPE:
-                            displayState = DisplayState.Quit;
+                            displayState = ScreenHandler.DisplayState.Quit;
                             break;
                     }
                     break;
                 case SDL.SDL_EventType.SDL_KEYDOWN:
                     switch (displayState)
                     {
-                        case DisplayState.MainMenu:
+                        case ScreenHandler.DisplayState.MainScreen:
                             switch (e.key.keysym.sym)
                             {
                                 case SDL.SDL_Keycode.SDLK_SPACE:
-                                    displayState = DisplayState.ActionMenu;
+                                    displayState = ScreenHandler.DisplayState.ActionScreen;
                                     break;
                             }
                             break;
-                        case DisplayState.ActionMenu:
+                        case ScreenHandler.DisplayState.ActionScreen:
                             switch (e.key.keysym.sym)
                             {
                                 case SDL.SDL_Keycode.SDLK_LCTRL:
-                                    displayState = DisplayState.MainMenu;
+                                    displayState = ScreenHandler.DisplayState.MainScreen;
                                     break;
                                 case SDL.SDL_Keycode.SDLK_DOWN:
-                                    if (ActionMenu.selectionIndex < ActionMenu.maxSelectionIndex)
+                                    if (ActionScreen.selectionIndex < ActionScreen.maxSelectionIndex)
                                     {
-                                        ActionMenu.selectionIndex++;
-                                        updateDisplay = true;
+                                        ActionScreen.selectionIndex++;
+                                        ScreenHandler.updateDisplay = true;
                                     }
                                     break;
                                 case SDL.SDL_Keycode.SDLK_UP:
-                                    if (ActionMenu.selectionIndex > 0)
+                                    if (ActionScreen.selectionIndex > 0)
                                     {
-                                        ActionMenu.selectionIndex--;
-                                        updateDisplay = true;
+                                        ActionScreen.selectionIndex--;
+                                        ScreenHandler.updateDisplay = true;
                                     }
                                     break;
                                 case SDL.SDL_Keycode.SDLK_SPACE:
-                                    switch (ActionMenu.selectionIndex)
+                                    switch (ActionScreen.selectionIndex)
                                     {
                                         case 0:
-                                            displayState = DisplayState.SaveMenu;
+                                            displayState = ScreenHandler.DisplayState.SaveScreen;
                                             break;
                                     }
                                     break;
                             }
                             break;
-                        case DisplayState.SaveMenu:
+                        case ScreenHandler.DisplayState.SaveScreen:
                             switch (e.key.keysym.sym)
                             {
                                 case SDL.SDL_Keycode.SDLK_LCTRL:
-                                    displayState = DisplayState.ActionMenu;
+                                    displayState = ScreenHandler.DisplayState.ActionScreen;
                                     break;
                                 case SDL.SDL_Keycode.SDLK_DOWN:
-                                    if (SaveMenu.selectionIndex < SaveMenu.maxSelectionIndex)
+                                    if (SaveScreen.selectionIndex < SaveScreen.maxSelectionIndex)
                                     {
-                                        SaveMenu.selectionIndex++;
-                                        updateDisplay = true;
+                                        SaveScreen.selectionIndex++;
+                                        ScreenHandler.updateDisplay = true;
                                     }
                                     break;
                                 case SDL.SDL_Keycode.SDLK_UP:
-                                    if (SaveMenu.selectionIndex > 0)
+                                    if (SaveScreen.selectionIndex > 0)
                                     {
-                                        SaveMenu.selectionIndex--;
-                                        updateDisplay = true;
+                                        SaveScreen.selectionIndex--;
+                                        ScreenHandler.updateDisplay = true;
                                     }
                                     break;
                                 case SDL.SDL_Keycode.SDLK_SPACE:
-                                    SaveHandler.LoadSave(savList[SaveMenu.selectionIndex]);
-                                    displayState = DisplayState.PKMMenu;
+                                    SaveHandler.LoadSave(Program.savList[SaveScreen.selectionIndex]);
+                                    PKMScreen.pkms = SaveHandler.pkmList!;
+                                    displayState = ScreenHandler.DisplayState.PKMScreen;
                                     break;
                             }
                             break;
-                        case DisplayState.ErrorMenu:
+                        case ScreenHandler.DisplayState.ErrorScreen:
                             switch (e.key.keysym.sym)
                             {
                                 case SDL.SDL_Keycode.SDLK_LCTRL:
-                                    displayState = DisplayState.ActionMenu;
+                                    displayState = ScreenHandler.DisplayState.ActionScreen;
                                     break;
                                 case SDL.SDL_Keycode.SDLK_SPACE:
-                                    displayState = DisplayState.MainMenu;
+                                    displayState = ScreenHandler.DisplayState.MainScreen;
                                     break;
                             }
                             break;
-                        case DisplayState.PKMMenu:
+                        case ScreenHandler.DisplayState.PKMScreen:
                             switch (e.key.keysym.sym)
                             {
                                 case SDL.SDL_Keycode.SDLK_LCTRL:
-                                    displayState = DisplayState.SaveMenu;
-                                    PKMMenu.selectionIndex = 0;
+                                    displayState = ScreenHandler.DisplayState.SaveScreen;
+                                    PKMScreen.selectionIndex = 0;
                                     break;
                                 case SDL.SDL_Keycode.SDLK_SPACE:
                                     break;
                                 case SDL.SDL_Keycode.SDLK_DOWN:
-                                    if (PKMMenu.selectionIndex < PKMMenu.maxSelectionIndex)
+                                    if (PKMScreen.selectionIndex < PKMScreen.maxSelectionIndex)
                                     {
-                                        PKMMenu.selectionIndex++;
-                                        updateDisplay = true;
+                                        PKMScreen.selectionIndex++;
+                                        ScreenHandler.updateDisplay = true;
                                     }
                                     break;
                                 case SDL.SDL_Keycode.SDLK_UP:
-                                    if (PKMMenu.selectionIndex > 0)
+                                    if (PKMScreen.selectionIndex > 0)
                                     {
-                                        PKMMenu.selectionIndex--;
-                                        updateDisplay = true;
+                                        PKMScreen.selectionIndex--;
+                                        ScreenHandler.updateDisplay = true;
                                     }
                                     break;
                             }
@@ -127,8 +127,8 @@ namespace PokemonCache
                     }
                     break;
             }
-            
+
             return displayState;
-		}
+        }
     }
 }

@@ -1,6 +1,6 @@
-﻿namespace PokemonCache
+﻿namespace PKCache.Screen
 {
-    internal class ActionMenu
+    internal class ActionScreen
     {
         public static int selectionIndex = 0;
         public readonly static int maxSelectionIndex = 2;

@@ -1,15 +1,15 @@
-﻿namespace PokemonCache
+﻿namespace PKCache.Screen
 {
-    internal class SaveMenu
+    internal class SaveScreen
     {
         public static int selectionIndex = 0;
         public static int maxSelectionIndex;
         internal static void Render(string[] savPaths)
         {
-            maxSelectionIndex = PokemonCache.savList.Length - 1;
+            maxSelectionIndex = Program.savList.Length - 1;
             if (maxSelectionIndex == -1)
             {
-                PokemonCache.errorOccured = Tuple.Create(true, "No save files present!");
+                Program.errorOccured = Tuple.Create(true, "No save files present!");
             }
             else
             {
@@ -27,14 +27,14 @@
 
                 if (offset > 0)
                 {
-                    string pathShort = savPaths[offset - 1].Replace(PokemonCache.savPath, null).Replace(".sav", null);
+                    string pathShort = savPaths[offset - 1].Replace(Program.savPath, null).Replace(".sav", null);
                     pathShort = pathShort.Length <= 17 ? pathShort : pathShort[..15] + "...";
 
                     UI_Elements.RenderButton(0, pathShort, false);
                 }
                 foreach (string path in viewPaths)
                 {
-                    string pathShort = path.Replace(PokemonCache.savPath, null).Replace(".sav", null);
+                    string pathShort = path.Replace(Program.savPath, null).Replace(".sav", null);
                     pathShort = pathShort.Length <= 17 ? pathShort : pathShort[..15] + "...";
 
                     int index = Array.IndexOf(savPaths, path);
@@ -42,7 +42,7 @@
                 }
                 if (offset + 2 < maxSelectionIndex)
                 {
-                    string pathShort = savPaths[offset + 3].Replace(PokemonCache.savPath, null).Replace(".sav", null);
+                    string pathShort = savPaths[offset + 3].Replace(Program.savPath, null).Replace(".sav", null);
                     pathShort = pathShort.Length <= 17 ? pathShort : pathShort[..15] + "...";
 
                     UI_Elements.RenderButton(480, pathShort, false);

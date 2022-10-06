@@ -1,4 +1,4 @@
-﻿namespace PokeSpriteJSON
+﻿namespace PKSpriteJSON
 {
     using System.Collections.Generic;
     using Newtonsoft.Json;

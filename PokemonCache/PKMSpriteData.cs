@@ -1,7 +1,7 @@
-﻿using PokeSpriteJSON;
+﻿using PKSpriteJSON;
 using System.Text.Json;
 
-namespace PokemonCache
+namespace PKCache
 {
 internal class PKMSpriteData
     {
@@ -9,14 +9,8 @@ internal class PKMSpriteData
 
         public static void Init()
         {
-            string jsonString = File.ReadAllText(PokemonCache.basePath + "json/pokemon.json");
+            string jsonString = File.ReadAllText(Program.basePath + "json/pokemon.json");
             pokeData = JsonSerializer.Deserialize<PokeData>(jsonString, new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
         }
-
-        public static string GetSlugFromSpecies(uint speciesId)
-        {
-            throw new NotImplementedException();
-        }
-
     }
 }

@@ -1,6 +1,6 @@
-﻿namespace PokemonCache
+﻿namespace PKCache.Screen
 {
-    internal class ErrorMenu
+    internal class ErrorScreen
     {
         internal static void Render(string error)
         {
