@@ -18,37 +18,25 @@ namespace PKCache.Screen
 
             else
             {
-                PKM[] viewPkm = new PKM[3];
-                int offset = 0;
-                if (maxSelectionIndex > 2)
+                int offset = 1;
+
+                if (pkms.Length > 3)
                 {
-                    offset = Math.Clamp(selectionIndex, 0, maxSelectionIndex - 2);
-                    Array.Copy(pkms, offset, viewPkm, 0, 3);
-                }
-                else
-                {
-                    viewPkm = pkms;
+                    offset = (selectionIndex - (selectionIndex % 3 + 1)) * -1;
                 }
 
-                if (offset > 0)
+                foreach (int visualIndex in Enumerable.Range(0, 5))
                 {
-                    PKM pkm = pkms[offset - 1];
-
-                    UI_Elements.RenderPKMButton(0, Clean(pkm.Nickname), false, pkm.Species, pkm.IsShiny, pkm.Gender == 1, pkm.Form);
-                }
-                foreach (PKM pkm in viewPkm)
-                {
-                    int index = Array.IndexOf(pkms, pkm);
-                    UI_Elements.RenderPKMButton(120 + 120 * (index - offset), Clean(pkm.Nickname), selectionIndex == index, pkm.Species, pkm.IsShiny, pkm.Gender == 1, pkm.Form);
-                }
-                if (offset + 2 < maxSelectionIndex)
-                {
-                    PKM pkm = pkms[offset + 3];
-
-                    UI_Elements.RenderPKMButton(480, Clean(pkm.Nickname), false, pkm.Species, pkm.IsShiny, pkm.Gender == 1, pkm.Form);
+                    int indexOffset = visualIndex - offset;
+                    if (indexOffset >= 0 & indexOffset < pkms.Length)
+                    {
+                        PKM pkm = pkms[indexOffset];
+                        UI_Elements.RenderPKMButton(120 * visualIndex, Clean(pkm.Nickname), selectionIndex == indexOffset, pkm.Species, pkm.IsShiny, pkm.Gender == 1, pkm.Form);
+                    }
                 }
             }
         }
+
         public static string Clean(string s)
         {
             StringBuilder sb = new(s);

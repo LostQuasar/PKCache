@@ -13,39 +13,22 @@
             }
             else
             {
-                string[] viewPaths = new string[3];
-                int offset = 0;
-                if (maxSelectionIndex > 2)
+                int offset = 1;
+
+                if (savPaths.Length > 3)
                 {
-                    offset = Math.Clamp(selectionIndex, 0, maxSelectionIndex - 2);
-                    Array.Copy(savPaths, offset, viewPaths, 0, 3);
-                }
-                else
-                {
-                    viewPaths = savPaths;
+                    offset = (selectionIndex - (selectionIndex % 3 + 1)) * -1;
                 }
 
-                if (offset > 0)
+                foreach (int visualIndex in Enumerable.Range(0, 5))
                 {
-                    string pathShort = savPaths[offset - 1].Replace(Program.savPath, null).Replace(".sav", null);
-                    pathShort = pathShort.Length <= 17 ? pathShort : pathShort[..15] + "...";
-
-                    UI_Elements.RenderButton(0, pathShort, false);
-                }
-                foreach (string path in viewPaths)
-                {
-                    string pathShort = path.Replace(Program.savPath, null).Replace(".sav", null);
-                    pathShort = pathShort.Length <= 17 ? pathShort : pathShort[..15] + "...";
-
-                    int index = Array.IndexOf(savPaths, path);
-                    UI_Elements.RenderButton(120 + 120 * (index - offset), pathShort, selectionIndex == index);
-                }
-                if (offset + 2 < maxSelectionIndex)
-                {
-                    string pathShort = savPaths[offset + 3].Replace(Program.savPath, null).Replace(".sav", null);
-                    pathShort = pathShort.Length <= 17 ? pathShort : pathShort[..15] + "...";
-
-                    UI_Elements.RenderButton(480, pathShort, false);
+                    int indexOffset = visualIndex - offset;
+                    if (indexOffset >= 0 & indexOffset < savPaths.Length)
+                    {
+                        string shortString = savPaths[indexOffset].Replace(Program.savPath, null).Replace(".sav", null);
+                        shortString = shortString.Length <= 17 ? shortString : shortString[..15] + "...";
+                        UI_Elements.RenderButton(120 * visualIndex, shortString, selectionIndex == indexOffset);
+                    }
                 }
             }
         }
