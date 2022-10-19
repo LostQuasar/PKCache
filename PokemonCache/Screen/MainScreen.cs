@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace PKCache.Screen
 {
-    internal class MainScreen
+    internal static class MainScreen
     {
         internal static void Render()
         {

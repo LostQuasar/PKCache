@@ -11,12 +11,12 @@ namespace PKCache.Screen
         public static readonly int SCREEN_HEIGHT = 480;
         public static readonly int BPP = 32;
         private static IntPtr _Window = IntPtr.Zero;
-        public static IntPtr Renderer;
-        public static IntPtr screen_ptr;
+        internal static IntPtr Renderer;
+        internal static IntPtr screen_ptr;
         private static IntPtr texture;
-        public static SDL.SDL_Rect clipRect;
+        internal static SDL.SDL_Rect clipRect;
         private static SDL.SDL_Surface screen;
-        public static bool updateDisplay = false;
+        internal static bool updateDisplay = false;
 
         public enum DisplayState
         {
@@ -26,7 +26,13 @@ namespace PKCache.Screen
             SaveScreen,
             ErrorScreen,
             PKMScreen,
-            Quit
+            LocationScreen,
+            SuccessScreen,
+            CacheScreen,
+            Quit,
+            ExportSaveScreen,
+            ExtrasScreen,
+            GiftScreen
         }
 
         public static void Init()
@@ -46,7 +52,7 @@ namespace PKCache.Screen
             screen = Marshal.PtrToStructure<SDL.SDL_Surface>(screen_ptr);
             texture = SDL.SDL_CreateTexture(Renderer, SDL.SDL_PIXELFORMAT_ARGB8888, (int)SDL.SDL_TextureAccess.SDL_TEXTUREACCESS_STREAMING, SCREEN_WIDTH, SCREEN_HEIGHT);
             SDL.SDL_GetClipRect(screen_ptr, out clipRect);
-
+            MainScreen.Render();
         }
 
 
@@ -70,15 +76,38 @@ namespace PKCache.Screen
                             ActionScreen.Render();
                             break;
                         case DisplayState.SaveScreen:
-                            SaveScreen.Render(Program.savList);
+                            SaveScreen.Render();
                             break;
                         case DisplayState.ErrorScreen:
-                            ErrorScreen.Render(Program.errorOccured.Item2);
+                            ErrorScreen.Render();
                             Program.errorOccured = Tuple.Create(false, "");
                             break;
                         case DisplayState.PKMScreen:
                             PKMScreen.Render();
                             break;
+                        case DisplayState.LocationScreen:
+                            LocationScreen.Render();
+                            break;
+                        case DisplayState.SuccessScreen:
+                            SuccessScreen.Render();
+                            break;
+                        case DisplayState.CacheScreen:
+                            PKMScreen.Render();
+                            break;
+                        case DisplayState.ExportSaveScreen:
+                            ExportSaveScreen.Render();
+                            break;
+                        case DisplayState.ExtrasScreen:
+                            ExtrasScreen.Render();
+                            break;
+                        case DisplayState.GiftScreen:
+                            GiftScreen.Render();
+                            break;
+                    }
+
+                    if (lastDisplayState == DisplayState.SuccessScreen)
+                    {
+                        CacheHandler.Init();
                     }
 
                     CheckErr(SDL.SDL_RenderClear(Renderer)); //Clear 

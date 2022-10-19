@@ -22,7 +22,7 @@ namespace PKCache.Screen
 
                 if (pkms.Length > 3)
                 {
-                    offset = (selectionIndex - (selectionIndex % 3 + 1)) * -1;
+                    offset = (selectionIndex - (selectionIndex % UI_Elements.ScrollMod + 1)) * -1;
                 }
 
                 foreach (int visualIndex in Enumerable.Range(0, 5))
@@ -31,7 +31,7 @@ namespace PKCache.Screen
                     if (indexOffset >= 0 & indexOffset < pkms.Length)
                     {
                         PKM pkm = pkms[indexOffset];
-                        UI_Elements.RenderPKMButton(120 * visualIndex, Clean(pkm.Nickname), selectionIndex == indexOffset, pkm.Species, pkm.IsShiny, pkm.Gender == 1, pkm.Form);
+                        UI_Elements.RenderPKMButton(120 * visualIndex, Clean(pkm.Nickname), selectionIndex == indexOffset, pkm);
                     }
                 }
             }
@@ -44,6 +44,7 @@ namespace PKCache.Screen
             sb.Replace("’", "'");
             sb.Replace("♀", " F");
             sb.Replace("♂", " M");
+            sb.Replace("タマゴ", "Egg");
 
             return sb.ToString();
         }

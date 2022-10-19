@@ -1,6 +1,6 @@
 ﻿namespace PKCache.Screen
 {
-    internal class SaveScreen
+    internal class ExportSaveScreen
     {
         public static int selectionIndex = 0;
         public static int maxSelectionIndex;
@@ -28,10 +28,16 @@
                     {
                         string shortString = savPaths[indexOffset].Replace(Program.savPath, null).Replace(".sav", null);
                         shortString = shortString.Length <= 17 ? shortString : shortString[..16] + "...";
-                        UI_Elements.RenderButton(120 * visualIndex, shortString, selectionIndex == indexOffset);
+                        if (indexOffset == SaveScreen.selectionIndex)
+                        {
+                            shortString = "Original Save";
+                        }
+                        
+                        UI_Elements.RenderButton(120 * visualIndex, shortString, selectionIndex == indexOffset, 30);
                     }
                 }
             }
+            UI_Elements.RenderSelPKM(SaveHandler.selectedPKM);
         }
     }
 }

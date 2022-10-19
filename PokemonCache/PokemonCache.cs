@@ -12,7 +12,6 @@ namespace PKCache
         }
 
         public static string basePath = "";
-        internal static string[] savList = Array.Empty<string>();
         internal static Tuple<bool,string> errorOccured = Tuple.Create(false, "");
         private static RuntimeEnv env;
         public static string savPath = "";
@@ -25,23 +24,16 @@ namespace PKCache
             switch (env)
             {
                 case RuntimeEnv.MiyooMini:
-                    savPath = "/mnt/SDCARD/Saves/CurrentProfile/saves/gpSP/";
+                    savPath = "/mnt/SDCARD/Saves/CurrentProfile/saves/";
                     break;
                 case RuntimeEnv.Desktop:
                     savPath = basePath;
                     break;
             }
 
-            SaveUtil.GetSavesFromFolder(savPath, true, out IEnumerable<string> files, true);
-            foreach (string file in files)
-            {
-                if (file.ToLower().Contains("pokemon"))
-                {
-                    savList = savList.Append(file).ToArray();
-                }
-            }
-            
             ScreenHandler.Init();
+            SaveHandler.Init();
+            CacheHandler.Init();
             ScreenHandler.DisplayLoop();
             ScreenHandler.Quit();
         }

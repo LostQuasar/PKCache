@@ -1,11 +1,11 @@
 ﻿using PKHeX.Core;
 using PKHeX.Core.Searching;
+using System.Text.RegularExpressions;
 
 namespace PKCache
 {
     internal class SaveHandler
     {
-
         public enum PKMTransfer
         {
             FromSavToSav,
@@ -15,6 +15,24 @@ namespace PKCache
 
         public static PKM[]? pkmList;
         private static SaveFile? savFile;
+        public static string? savPath;
+        public static Dictionary<string, string> saveDict = new();
+        internal static PKM? selectedPKM;
+
+        public static void Init()
+        {
+            SaveUtil.GetSavesFromFolder(Program.savPath, true, out IEnumerable<string> files, true);
+            foreach (string file in files)
+            {
+                if (file.ToLower().Contains("pokemon"))
+                {
+                    string shortName = file.Replace(Program.savPath, null).Replace(".sav", null); ;
+                    shortName = Regex.Replace(shortName, @".+?\/|.+?\\", "");
+                    saveDict.Add(shortName, file);
+                }
+            }
+        }
+
         public static void LoadSave(string savPath)
         {
             byte[] savBytes = File.ReadAllBytes(savPath);
@@ -37,6 +55,7 @@ namespace PKCache
             {
                 pkmList = locPkmList;
             }
+            Console.WriteLine(savFile.MaxSpeciesID);
         }
 
         public static Tuple<int, int> GetIndexPKM(PKM pkm)
@@ -62,23 +81,21 @@ namespace PKCache
             return new(-1, -1);
         }
 
-        public static bool RemovePKMFromSav(Tuple<int, int> tuple)
+        public static void RemovePKMFromSav(Tuple<int, int> tuple)
         {
             if (tuple.Item2 == -1 | savFile == null)
             {
                 Program.errorOccured = new(true, "Unable to remove pokemon from save");
-                return true;
+                return;
 
             }
             else if (tuple.Item1 == -1)
             {
                 savFile.DeletePartySlot(tuple.Item2);
-                return false;
             }
             else
             {
                 savFile.SetBoxSlotAtIndex(savFile.BlankPKM, tuple.Item1, tuple.Item2);
-                return false;
             }
         }
 
@@ -94,33 +111,37 @@ namespace PKCache
             File.Delete(pkmPath);
         }
 
-        public static bool AddPKMToSav(string path, PKM pkm)
+        public static void AddPKMToSav(string path, PKM pkm)
         {
             byte[] savBytes = File.ReadAllBytes(path);
             SaveFile? outSav = SaveUtil.GetVariantSAV(savBytes);
             if (outSav == null)
             {
                 Program.errorOccured = Tuple.Create(true, "Could not load save");
-                return true;
+                return;
             }
+
+            if (pkm.Species > outSav.MaxSpeciesID)
+            {
+                Program.errorOccured = Tuple.Create(true, "Pokemon can not be transfered");
+                return;
+            }
+
             else if (outSav.PartyCount >= 6)
             {
                 int nextOpenSlot = outSav.NextOpenBoxSlot();
                 if (nextOpenSlot == -1)
                 {
                     Program.errorOccured = Tuple.Create(true, "No space to store PKM");
-                    return true;
                 }
                 else
                 {
                     outSav.SetBoxSlotAtIndex(pkm, nextOpenSlot);
-                    return false;
                 }
             }
             else
             {
                 outSav.SetPartySlotAtIndex(pkm, outSav.PartyCount);
-                return false;
             }
 
         }
@@ -130,7 +151,7 @@ namespace PKCache
             switch (direction)
             {
                 case PKMTransfer.FromSavToSav:
-                    if ( toPath == null)
+                    if (toPath == null)
                     {
                         Program.errorOccured = Tuple.Create(true, "Must have destination path to write to save");
                     }
@@ -156,6 +177,39 @@ namespace PKCache
                     WritePKMFile(pkm);
                     break;
             }
+            UpdateSave(savPath);
+            selectedPKM = null;
+        }
+
+        private static void UpdateSave(string? savPath)
+        {
+            if (savPath == null)
+            {
+                Program.errorOccured = Tuple.Create(true, "Could not update save");
+                return;
+            }
+            if (savFile == null)
+            {
+                Program.errorOccured = Tuple.Create(true, "Save file is not loaded");
+                return;
+            }
+            File.WriteAllBytes(savPath, savFile.Write());
+        }
+
+        public static void CreateBackup(string? savPath)
+        {
+            if (savPath == null)
+            {
+                Program.errorOccured = Tuple.Create(true, "Could not create backup");
+                return;
+            }
+            if (savFile == null)
+            {
+                Program.errorOccured = Tuple.Create(true, "Save file is not loaded");
+                return;
+            }
+            File.WriteAllBytes(savPath.Replace(".sav", ".bak"), savFile.Write());
+
         }
     }
 }
